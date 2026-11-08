@@ -734,3 +734,48 @@ document.getElementById("btnGuardar")?.addEventListener("click", function() {
     alert("❌ Error de red al intentar conectar con Google Sheets.");
   });
 });
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbydTbUNUR6yO0yOdKixFUWoNo4OrpT3X8ftYfRAn6-IaBdyPeqjs1Wq1Xz7tqsCi2gh/exec";
+
+  function enviar() {
+    // Busca la casilla donde se escribe el nombre del profesor
+    const inputDocente = document.querySelector("input[type='text']") || document.querySelector("input");
+    const docente = inputDocente ? inputDocente.value.trim() : "Docente Sin Nombre";
+
+    if (!docente) {
+      alert("Por favor, escribe el nombre del docente antes de enviar.");
+      return;
+    }
+
+    // Datos a enviar a Google Sheets
+    const datos = {
+      equipo: "CAR-PORT",
+      docente: docente,
+      accion: "Préstamo"
+    };
+
+    // Envío sin bloqueo de CORS
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain" },
+      body: JSON.stringify(datos)
+    })
+    .then(() => {
+      alert("✅ ¡Préstamo registrado en Google Sheets!");
+      if (inputDocente) inputDocente.value = "";
+    })
+    .catch((err) => {
+      console.error(err);
+      alert("❌ Hubo un error de conexión.");
+    });
+  }
+
+  // Asigna automáticamente la función de envío al botón al hacer clic
+  document.addEventListener("DOMContentLoaded", function() {
+    const boton = document.querySelector("button") || document.getElementById("btnGuardar");
+    if (boton) {
+      boton.addEventListener("click", enviar);
+    }
+  });
+</script>

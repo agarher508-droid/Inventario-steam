@@ -685,5 +685,53 @@
     }
 
     registrarMovimiento(equipo, docente, "Préstamo");
+      
   });
 </script>
+    // Variable con la URL de tu despliegue (debe terminar en /exec)
+const SCRIPT_URL = "https://script.google.com/macros/s/TU_URL_DE_APPS_SCRIPT_AQUI/exec";
+
+document.getElementById("btnGuardar")?.addEventListener("click", function() {
+  // Busca el nombre del docente en cualquier ID habitual
+  const inputDocente = document.getElementById("docenteInput") || 
+                       document.getElementById("profesor") || 
+                       document.getElementById("docente") || 
+                       document.querySelector("input[type='text']");
+
+  // Busca el código del recurso en cualquier ID habitual
+  const inputEquipo = document.getElementById("equipoInput") || 
+                      document.getElementById("equipo") || 
+                      document.getElementById("recurso") || 
+                      document.getElementById("codigo");
+
+  const docente = inputDocente ? inputDocente.value.trim() : "Docente Sin Nombre";
+  const equipo = inputEquipo ? inputEquipo.value.trim() : "CAR-PORT";
+
+  if (!docente) {
+    alert("Por favor, introduce el nombre del docente.");
+    return;
+  }
+
+  // Objeto con los datos a enviar
+  const payload = {
+    equipo: equipo,
+    docente: docente,
+    accion: "Préstamo"
+  };
+
+  // Envío a Apps Script
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "text/plain" },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    alert("✅ ¡Préstamo enviado correctamente!");
+    if (inputDocente) inputDocente.value = "";
+  })
+  .catch((err) => {
+    console.error(err);
+    alert("❌ Error de red al intentar conectar con Google Sheets.");
+  });
+});

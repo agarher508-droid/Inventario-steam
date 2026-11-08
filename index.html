@@ -638,5 +638,52 @@
             }
         }
     </script>
-</body>
-</html>
+<script>   
+  // https://script.google.com/macros/s/AKfycbydTbUNUR6yO0yOdKixFUWoNo4OrpT3X8ftYfRAn6-IaBdyPeqjs1Wq1Xz7tqsCi2gh/exec
+  const SCRIPT_URL = "https://script.google.com/macros/s/TU_URL_DE_APPS_SCRIPT_AQUI/exec";
+
+  // Función para registrar el préstamo en Google Sheets
+  function registrarMovimiento(equipo, docente, accion) {
+    if (!SCRIPT_URL || SCRIPT_URL.includes("TU_URL_DE_APPS_SCRIPT_AQUI")) {
+      alert("⚠️ Error: Debes configurar la SCRIPT_URL en la línea 54 con tu enlace de Apps Script.");
+      return;
+    }
+
+    const payload = {
+      equipo: equipo,
+      docente: docente,
+      accion: accion || "Préstamo"
+    };
+
+    // Envío compatible con iPad y PC sin bloqueo CORS
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "text/plain"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      alert("✅ ¡Registrado en Google Sheets con éxito!");
+      document.getElementById("docenteInput").value = "";
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      alert("❌ Hubo un fallo en la conexión al enviar los datos.");
+    });
+  }
+
+  // Evento del botón de la página para enviar
+  document.getElementById("btnGuardar")?.addEventListener("click", function() {
+    const equipo = document.getElementById("equipoInput")?.value || "CAR-PORT";
+    const docente = document.getElementById("docenteInput")?.value || "Prueba Docente";
+
+    if (!docente.trim()) {
+      alert("Por favor, introduce el nombre del docente.");
+      return;
+    }
+
+    registrarMovimiento(equipo, docente, "Préstamo");
+  });
+</script>
